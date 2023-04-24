@@ -1,6 +1,8 @@
 """Main script for the autogpt package."""
 import click
 
+from autogpt.monitoring.extra_console import ExtraConsole
+
 
 @click.group(invoke_without_command=True)
 @click.option("-c", "--continuous", is_flag=True, help="Enable Continuous Mode")
@@ -47,6 +49,11 @@ import click
     is_flag=True,
     help="Specifies whether to suppress the output of latest news on startup.",
 )
+@click.option(
+    "--monitor-llm",
+    is_flag=True,
+    help="Specifies whether to show messages sent to LLM in another window.",
+)
 @click.pass_context
 def main(
     ctx: click.Context,
@@ -62,6 +69,7 @@ def main(
     browser_name: str,
     allow_downloads: bool,
     skip_news: bool,
+    monitor_llm: bool,
 ) -> None:
     """
     Welcome to AutoGPT an experimental open-source application showcasing the capabilities of the GPT-4 pushing the boundaries of AI.
@@ -99,6 +107,7 @@ def main(
             browser_name,
             allow_downloads,
             skip_news,
+            monitor_llm
         )
         logger.set_level(logging.DEBUG if cfg.debug_mode else logging.INFO)
         ai_name = ""
@@ -149,6 +158,7 @@ def main(
             triggering_prompt=triggering_prompt,
         )
         agent.start_interaction_loop()
+        ExtraConsole.close_all()
 
 
 if __name__ == "__main__":

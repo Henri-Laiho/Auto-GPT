@@ -120,6 +120,9 @@ class Config(metaclass=Singleton):
         # Note that indexes must be created on db 0 in redis, this is not configurable.
 
         self.memory_backend = os.getenv("MEMORY_BACKEND", "local")
+        
+        self.monitor_llm_messages = os.getenv("MONITOR_LLM_MESSAGES", "False") == 'True'
+
         # Initialize the OpenAI API client
         openai.api_key = self.openai_api_key
 

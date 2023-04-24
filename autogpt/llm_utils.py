@@ -9,7 +9,10 @@ from openai.error import APIError, RateLimitError
 
 from autogpt.config import Config
 from autogpt.logs import logger
+from autogpt.monitoring.extra_console import ExtraConsole
 
+
+MONITORCONSOLE = ExtraConsole('LLM Monitoring')
 CFG = Config()
 
 openai.api_key = CFG.openai_api_key
@@ -78,6 +81,11 @@ def create_chat_completion(
             + f"Creating chat completion with model {model}, temperature {temperature},"
             f" max_tokens {max_tokens}" + Fore.RESET
         )
+    if CFG.monitor_llm_messages:
+        message = f"Sending request to model {model}:\n"
+        for msg in messages:
+            message += f"{msg['role']}: {msg['content']}\n"
+        MONITORCONSOLE.print(message)
     for attempt in range(num_retries):
         backoff = 2 ** (attempt + 2)
         try:
@@ -135,6 +143,8 @@ def create_chat_completion(
         else:
             quit(1)
 
+    if CFG.monitor_llm_messages:
+        MONITORCONSOLE.print(f"Response from {model}:\n{response.choices[0].message['content']}\n\n-------\n\n")
     return response.choices[0].message["content"]
 
 

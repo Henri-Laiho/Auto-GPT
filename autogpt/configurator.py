@@ -23,6 +23,7 @@ def create_config(
     browser_name: str,
     allow_downloads: bool,
     skip_news: bool,
+    monitor_llm: bool,
 ) -> None:
     """Updates the config object with the given arguments.
 
@@ -129,6 +130,9 @@ def create_config(
 
     if skip_news:
         CFG.skip_news = True
+
+    if monitor_llm:
+        CFG.monitor_llm_messages = True
 
     if browser_name:
         CFG.selenium_web_browser = browser_name
